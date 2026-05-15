@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { Copy, Sparkles } from 'lucide-react'
+import { Copy, Sparkles, Wand2 } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 import { generatePrompt } from '../utils/promptGenerator'
+import SuggestionCards from './SuggestionCards'
 
 function PromptBox({
   promptHistory,
@@ -11,6 +13,7 @@ function PromptBox({
   const [idea, setIdea] = useState('')
   const [category, setCategory] = useState('ChatGPT')
   const [generatedPrompt, setGeneratedPrompt] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleGeneratePrompt = () => {
     if (!idea.trim()) {
@@ -18,26 +21,32 @@ function PromptBox({
       return
     }
 
-    const result = generatePrompt(category, idea)
+    setLoading(true)
 
-    setGeneratedPrompt(result)
+    setTimeout(() => {
+      const result = generatePrompt(category, idea)
 
-    const updatedHistory = [
-      {
-        text: result,
-        category,
-      },
-      ...promptHistory,
-    ]
+      setGeneratedPrompt(result)
 
-    setPromptHistory(updatedHistory)
+      const updatedHistory = [
+        {
+          text: result,
+          category,
+        },
+        ...promptHistory,
+      ]
 
-    localStorage.setItem(
-      'promptHistory',
-      JSON.stringify(updatedHistory)
-    )
+      setPromptHistory(updatedHistory)
 
-    toast.success('Prompt generated successfully!')
+      localStorage.setItem(
+        'promptHistory',
+        JSON.stringify(updatedHistory)
+      )
+
+      setLoading(false)
+
+      toast.success('Prompt generated successfully!')
+    }, 1800)
   }
 
   const handleCopy = async () => {
@@ -53,7 +62,14 @@ function PromptBox({
 
   return (
     <section className="mx-auto max-w-4xl pb-10">
-      <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
+      <SuggestionCards setIdea={setIdea} />
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl"
+      >
         <div className="mb-6 flex items-center gap-3">
           <Sparkles className="text-cyan-300" />
 
@@ -94,21 +110,46 @@ function PromptBox({
             </select>
           </div>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             onClick={handleGeneratePrompt}
-            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-cyan-400 py-4 text-lg font-semibold text-black transition hover:scale-[1.02] hover:bg-cyan-300"
+            disabled={loading}
+            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-cyan-400 py-4 text-lg font-semibold text-black transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            <Sparkles size={20} />
+            {loading ? (
+              <>
+                <Wand2 className="animate-spin" size={20} />
 
-            Generate Prompt
-          </button>
+                AI is thinking...
+              </>
+            ) : (
+              <>
+                <Sparkles size={20} />
+
+                Generate Prompt
+              </>
+            )}
+          </motion.button>
 
           {generatedPrompt && (
-            <div className="mt-8 rounded-2xl border border-cyan-400/20 bg-[#111827] p-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="mt-8 rounded-2xl border border-cyan-400/20 bg-[#111827] p-6"
+            >
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-cyan-300">
-                  Generated Prompt
-                </h3>
+                <div className="flex items-center gap-3">
+                  <Sparkles
+                    size={18}
+                    className="text-cyan-300"
+                  />
+
+                  <h3 className="text-lg font-semibold text-cyan-300">
+                    Generated Prompt
+                  </h3>
+                </div>
 
                 <button
                   onClick={handleCopy}
@@ -123,10 +164,10 @@ function PromptBox({
               <p className="leading-8 text-gray-300">
                 {generatedPrompt}
               </p>
-            </div>
+            </motion.div>
           )}
         </div>
-      </div>
+      </motion.div>
     </section>
   )
 }
