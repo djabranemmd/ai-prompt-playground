@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react'
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from 'react-router-dom'
 
 import { Toaster } from 'react-hot-toast'
 
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import MobileSidebar from './components/MobileSidebar'
 
 import Home from './pages/Home'
 import Explore from './pages/Explore'
@@ -22,6 +27,9 @@ function App() {
     useState('ChatGPT')
 
   const [darkMode, setDarkMode] = useState(true)
+
+  const [isSidebarOpen, setIsSidebarOpen] =
+    useState(false)
 
   useEffect(() => {
     const savedPrompts =
@@ -55,13 +63,21 @@ function App() {
         <Navbar
           darkMode={darkMode}
           setDarkMode={setDarkMode}
+          setIsSidebarOpen={setIsSidebarOpen}
         />
 
-        <main className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[280px_1fr]">
-          <Sidebar
-            category={category}
-            setCategory={setCategory}
-          />
+        <MobileSidebar
+          isOpen={isSidebarOpen}
+          setIsOpen={setIsSidebarOpen}
+        />
+
+        <main className="mx-auto grid max-w-7xl gap-8 px-4 py-6 md:px-6 md:py-10 lg:grid-cols-[280px_1fr]">
+          <div className="hidden lg:block">
+            <Sidebar
+              category={category}
+              setCategory={setCategory}
+            />
+          </div>
 
           <div>
             <Routes>

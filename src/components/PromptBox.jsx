@@ -7,6 +7,7 @@ import {
   Sparkles,
   Wand2,
   BookmarkPlus,
+  WandSparkles,
 } from 'lucide-react'
 
 import { motion } from 'framer-motion'
@@ -14,6 +15,8 @@ import { motion } from 'framer-motion'
 import { generatePrompt } from '../utils/promptGenerator'
 
 import { calculatePromptScore } from '../utils/promptScorer'
+
+import { enhancePrompt } from '../utils/promptEnhancer'
 
 import SuggestionCards from './SuggestionCards'
 import TypingPreview from './TypingPreview'
@@ -46,16 +49,19 @@ function PromptBox({
     setTimeout(() => {
       const result = generatePrompt(category, idea)
 
-      setGeneratedPrompt(result)
+      const enhancedResult =
+        enhancePrompt(result)
+
+      setGeneratedPrompt(enhancedResult)
 
       const promptScore =
-        calculatePromptScore(result)
+        calculatePromptScore(enhancedResult)
 
       setScore(promptScore)
 
       const updatedHistory = [
         {
-          text: result,
+          text: enhancedResult,
           category,
           score: promptScore,
         },
@@ -71,7 +77,9 @@ function PromptBox({
 
       setLoading(false)
 
-      toast.success('Prompt generated successfully!')
+      toast.success(
+        'Enhanced AI prompt generated!'
+      )
     }, 1800)
   }
 
@@ -119,18 +127,18 @@ function PromptBox({
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_0_60px_rgba(0,255,255,0.08)] backdrop-blur-2xl"
+        className="rounded-[32px] border border-white/10 bg-white/5 p-5 md:p-8 shadow-[0_0_60px_rgba(0,255,255,0.08)] backdrop-blur-2xl"
       >
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <Sparkles className="text-cyan-300" />
 
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-xl font-bold md:text-2xl">
               AI Prompt Generator
             </h2>
           </div>
 
-          <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">
+          <span className="w-fit rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">
             {category}
           </span>
         </div>
@@ -157,13 +165,13 @@ function PromptBox({
                   size={20}
                 />
 
-                AI is generating your prompt...
+                AI is generating...
               </>
             ) : (
               <>
-                <Sparkles size={20} />
+                <WandSparkles size={20} />
 
-                Generate Prompt
+                Generate Enhanced Prompt
               </>
             )}
           </motion.button>
@@ -176,7 +184,7 @@ function PromptBox({
             >
               <PromptScore score={score} />
 
-              <div className="mb-5 flex items-center justify-between">
+              <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center gap-3">
                   <Sparkles
                     size={18}
@@ -184,11 +192,11 @@ function PromptBox({
                   />
 
                   <h3 className="text-lg font-semibold text-cyan-300">
-                    Generated Prompt
+                    Enhanced Prompt
                   </h3>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap gap-3">
                   <button
                     onClick={handleFavorite}
                     className="flex items-center gap-2 rounded-2xl border border-yellow-400/20 bg-yellow-400/10 px-4 py-2 text-sm text-yellow-300 transition hover:bg-yellow-400/20"
