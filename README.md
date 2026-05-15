@@ -6,7 +6,7 @@ A modern AI-powered web application that transforms simple ideas into **high-qua
 
 ## 🌍 Live Demo
 
-👉 [Go From This Link:](https://ai-prompt-playground-eta.vercel.app/)
+👉 [Go From Click Me](https://ai-prompt-playground-eta.vercel.app/)
 
 ---
 
