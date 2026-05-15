@@ -16,6 +16,8 @@ function App() {
   const [promptHistory, setPromptHistory] =
     useState([])
 
+  const [favorites, setFavorites] = useState([])
+
   const [category, setCategory] =
     useState('ChatGPT')
 
@@ -25,7 +27,12 @@ function App() {
     const savedPrompts =
       JSON.parse(localStorage.getItem('promptHistory')) || []
 
+    const savedFavorites =
+      JSON.parse(localStorage.getItem('favorites')) || []
+
     setPromptHistory(savedPrompts)
+
+    setFavorites(savedFavorites)
   }, [])
 
   const themeClasses = darkMode
@@ -65,6 +72,8 @@ function App() {
                     category={category}
                     promptHistory={promptHistory}
                     setPromptHistory={setPromptHistory}
+                    favorites={favorites}
+                    setFavorites={setFavorites}
                   />
                 }
               />
@@ -83,7 +92,7 @@ function App() {
                 path="/saved"
                 element={
                   <SavedPrompts
-                    promptHistory={promptHistory}
+                    promptHistory={favorites}
                   />
                 }
               />

@@ -6,19 +6,25 @@ import {
   Copy,
   Sparkles,
   Wand2,
+  BookmarkPlus,
 } from 'lucide-react'
 
 import { motion } from 'framer-motion'
 
 import { generatePrompt } from '../utils/promptGenerator'
 
+import { calculatePromptScore } from '../utils/promptScorer'
+
 import SuggestionCards from './SuggestionCards'
 import TypingPreview from './TypingPreview'
+import PromptScore from './PromptScore'
 
 function PromptBox({
   category,
   promptHistory,
   setPromptHistory,
+  favorites,
+  setFavorites,
 }) {
   const [idea, setIdea] = useState('')
 
@@ -26,6 +32,8 @@ function PromptBox({
     useState('')
 
   const [loading, setLoading] = useState(false)
+
+  const [score, setScore] = useState(0)
 
   const handleGeneratePrompt = () => {
     if (!idea.trim()) {
@@ -40,10 +48,16 @@ function PromptBox({
 
       setGeneratedPrompt(result)
 
+      const promptScore =
+        calculatePromptScore(result)
+
+      setScore(promptScore)
+
       const updatedHistory = [
         {
           text: result,
           category,
+          score: promptScore,
         },
         ...promptHistory,
       ]
@@ -68,10 +82,31 @@ function PromptBox({
       )
 
       toast.success('Prompt copied to clipboard!')
-    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       toast.error('Failed to copy prompt.')
     }
+  }
+
+  const handleFavorite = () => {
+    const newFavorite = {
+      text: generatedPrompt,
+      category,
+      score,
+    }
+
+    const updatedFavorites = [
+      newFavorite,
+      ...favorites,
+    ]
+
+    setFavorites(updatedFavorites)
+
+    localStorage.setItem(
+      'favorites',
+      JSON.stringify(updatedFavorites)
+    )
+
+    toast.success('Added to favorites!')
   }
 
   return (
@@ -139,6 +174,8 @@ function PromptBox({
               animate={{ opacity: 1, y: 0 }}
               className="rounded-3xl border border-cyan-400/20 bg-[#111827]/80 p-6"
             >
+              <PromptScore score={score} />
+
               <div className="mb-5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Sparkles
@@ -151,14 +188,25 @@ function PromptBox({
                   </h3>
                 </div>
 
-                <button
-                  onClick={handleCopy}
-                  className="flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300 transition hover:bg-cyan-400/20"
-                >
-                  <Copy size={16} />
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleFavorite}
+                    className="flex items-center gap-2 rounded-2xl border border-yellow-400/20 bg-yellow-400/10 px-4 py-2 text-sm text-yellow-300 transition hover:bg-yellow-400/20"
+                  >
+                    <BookmarkPlus size={16} />
 
-                  Copy
-                </button>
+                    Favorite
+                  </button>
+
+                  <button
+                    onClick={handleCopy}
+                    className="flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300 transition hover:bg-cyan-400/20"
+                  >
+                    <Copy size={16} />
+
+                    Copy
+                  </button>
+                </div>
               </div>
 
               <p className="leading-8 text-gray-300">
