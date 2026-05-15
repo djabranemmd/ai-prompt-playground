@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react'
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
 import { Toaster } from 'react-hot-toast'
 
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import PromptBox from './components/PromptBox'
-import PromptHistory from './components/PromptHistory'
 import Sidebar from './components/Sidebar'
 
+import Home from './pages/Home'
+import Explore from './pages/Explore'
+import Templates from './pages/Templates'
+import SavedPrompts from './pages/SavedPrompts'
+
 function App() {
-  const [promptHistory, setPromptHistory] = useState([])
+  const [promptHistory, setPromptHistory] =
+    useState([])
 
   const [category, setCategory] =
     useState('ChatGPT')
@@ -19,7 +25,6 @@ function App() {
     const savedPrompts =
       JSON.parse(localStorage.getItem('promptHistory')) || []
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPromptHistory(savedPrompts)
   }, [])
 
@@ -28,42 +33,65 @@ function App() {
     : 'bg-[#f3f7ff] text-black'
 
   return (
-    <div className={`min-h-screen transition ${themeClasses}`}>
-      <Toaster position="top-right" />
+    <BrowserRouter>
+      <div
+        className={`min-h-screen transition ${themeClasses}`}
+      >
+        <Toaster position="top-right" />
 
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-[-10%] top-[-10%] h-[400px] w-[400px] rounded-full bg-cyan-500/20 blur-3xl" />
+        <div className="fixed inset-0 -z-10 overflow-hidden">
+          <div className="absolute left-[-10%] top-[-10%] h-[400px] w-[400px] rounded-full bg-cyan-500/20 blur-3xl" />
 
-        <div className="absolute bottom-[-10%] right-[-10%] h-[400px] w-[400px] rounded-full bg-purple-500/20 blur-3xl" />
-      </div>
+          <div className="absolute bottom-[-10%] right-[-10%] h-[400px] w-[400px] rounded-full bg-purple-500/20 blur-3xl" />
+        </div>
 
-      <Navbar
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-      />
-
-      <main className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[280px_1fr]">
-        <Sidebar
-          category={category}
-          setCategory={setCategory}
+        <Navbar
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
         />
 
-        <div>
-          <Hero />
-
-          <PromptBox
+        <main className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[280px_1fr]">
+          <Sidebar
             category={category}
-            promptHistory={promptHistory}
-            setPromptHistory={setPromptHistory}
+            setCategory={setCategory}
           />
 
-          <PromptHistory
-            prompts={promptHistory}
-            setPromptHistory={setPromptHistory}
-          />
-        </div>
-      </main>
-    </div>
+          <div>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    category={category}
+                    promptHistory={promptHistory}
+                    setPromptHistory={setPromptHistory}
+                  />
+                }
+              />
+
+              <Route
+                path="/explore"
+                element={<Explore />}
+              />
+
+              <Route
+                path="/templates"
+                element={<Templates />}
+              />
+
+              <Route
+                path="/saved"
+                element={
+                  <SavedPrompts
+                    promptHistory={promptHistory}
+                  />
+                }
+              />
+            </Routes>
+          </div>
+        </main>
+      </div>
+    </BrowserRouter>
   )
 }
 

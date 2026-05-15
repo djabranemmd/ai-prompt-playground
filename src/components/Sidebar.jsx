@@ -1,63 +1,103 @@
 import {
   Sparkles,
-  Image,
-  Code2,
-  Megaphone,
-  Video,
+  Compass,
+  LayoutTemplate,
+  Bookmark,
 } from 'lucide-react'
 
-const categories = [
+import { NavLink } from 'react-router-dom'
+
+const links = [
   {
-    name: 'ChatGPT',
+    name: 'Home',
+    path: '/',
     icon: Sparkles,
   },
   {
-    name: 'Image Generator',
-    icon: Image,
+    name: 'Explore',
+    path: '/explore',
+    icon: Compass,
   },
   {
-    name: 'Coding Assistant',
-    icon: Code2,
+    name: 'Templates',
+    path: '/templates',
+    icon: LayoutTemplate,
   },
   {
-    name: 'Marketing',
-    icon: Megaphone,
-  },
-  {
-    name: 'Video Generator',
-    icon: Video,
+    name: 'Saved',
+    path: '/saved',
+    icon: Bookmark,
   },
 ]
 
-function Sidebar({ category, setCategory }) {
+const categories = [
+  'ChatGPT',
+  'Image Generator',
+  'Coding Assistant',
+  'Marketing',
+  'Video Generator',
+]
+
+function Sidebar({
+  category,
+  setCategory,
+}) {
   return (
-    <aside className="sticky top-6 h-fit rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-      <h2 className="mb-6 text-lg font-bold text-white">
-        AI Categories
-      </h2>
+    <aside className="sticky top-6 h-fit rounded-[32px] border border-white/10 bg-white/5 p-5 backdrop-blur-2xl">
+      <div className="mb-8">
+        <h2 className="mb-4 text-lg font-bold">
+          Navigation
+        </h2>
 
-      <div className="space-y-3">
-        {categories.map((item) => {
-          const Icon = item.icon
+        <div className="space-y-3">
+          {links.map((link) => {
+            const Icon = link.icon
 
-          const active = category === item.name
+            return (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-2xl px-4 py-3 transition ${
+                    isActive
+                      ? 'bg-cyan-400 text-black'
+                      : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                  }`
+                }
+              >
+                <Icon size={18} />
 
-          return (
-            <button
-              key={item.name}
-              onClick={() => setCategory(item.name)}
-              className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition ${
-                active
-                  ? 'bg-cyan-400 text-black'
-                  : 'bg-white/5 text-gray-300 hover:bg-white/10'
-              }`}
-            >
-              <Icon size={18} />
+                {link.name}
+              </NavLink>
+            )
+          })}
+        </div>
+      </div>
 
-              {item.name}
-            </button>
-          )
-        })}
+      <div>
+        <h2 className="mb-4 text-lg font-bold">
+          Categories
+        </h2>
+
+        <div className="space-y-3">
+          {categories.map((item) => {
+            const active = category === item
+
+            return (
+              <button
+                key={item}
+                onClick={() => setCategory(item)}
+                className={`w-full rounded-2xl px-4 py-3 text-left transition ${
+                  active
+                    ? 'bg-cyan-400 text-black'
+                    : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                }`}
+              >
+                {item}
+              </button>
+            )
+          })}
+        </div>
       </div>
     </aside>
   )

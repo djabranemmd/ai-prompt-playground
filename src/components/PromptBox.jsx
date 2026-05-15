@@ -68,6 +68,7 @@ function PromptBox({
       )
 
       toast.success('Prompt copied to clipboard!')
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       toast.error('Failed to copy prompt.')
     }
