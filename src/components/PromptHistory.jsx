@@ -1,17 +1,46 @@
-import { History } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { Trash2, History } from 'lucide-react'
 
-function PromptHistory({ prompts }) {
-  if (prompts.length === 0) return null
+function PromptHistory({
+  prompts,
+  setPromptHistory,
+}) {
+  if (prompts.length === 0) {
+    return (
+      <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-10 text-center text-gray-400 backdrop-blur-xl">
+        No prompts generated yet.
+      </div>
+    )
+  }
+
+  const clearHistory = () => {
+    localStorage.removeItem('promptHistory')
+
+    setPromptHistory([])
+
+    toast.success('Prompt history cleared!')
+  }
 
   return (
-    <section className="mx-auto mt-10 max-w-4xl pb-24">
+    <section className="pb-24">
       <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
-        <div className="mb-6 flex items-center gap-3">
-          <History className="text-cyan-300" />
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <History className="text-cyan-300" />
 
-          <h2 className="text-2xl font-bold">
-            Prompt History
-          </h2>
+            <h2 className="text-2xl font-bold">
+              Prompt History
+            </h2>
+          </div>
+
+          <button
+            onClick={clearHistory}
+            className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm text-red-300 transition hover:bg-red-500/20"
+          >
+            <Trash2 size={16} />
+
+            Clear
+          </button>
         </div>
 
         <div className="space-y-4">
