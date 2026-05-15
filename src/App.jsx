@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 
 import {
   BrowserRouter,
@@ -12,24 +12,18 @@ import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import MobileSidebar from './components/MobileSidebar'
 
-import Home from './pages/Home'
-import Explore from './pages/Explore'
-import Templates from './pages/Templates'
-import SavedPrompts from './pages/SavedPrompts'
+// Lazy loaded pages
+const Home = lazy(() => import('./pages/Home'))
+const Explore = lazy(() => import('./pages/Explore'))
+const Templates = lazy(() => import('./pages/Templates'))
+const SavedPrompts = lazy(() => import('./pages/SavedPrompts'))
 
 function App() {
-  const [promptHistory, setPromptHistory] =
-    useState([])
-
+  const [promptHistory, setPromptHistory] = useState([])
   const [favorites, setFavorites] = useState([])
-
-  const [category, setCategory] =
-    useState('ChatGPT')
-
+  const [category, setCategory] = useState('ChatGPT')
   const [darkMode, setDarkMode] = useState(true)
-
-  const [isSidebarOpen, setIsSidebarOpen] =
-    useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   useEffect(() => {
     const savedPrompts =
@@ -39,7 +33,6 @@ function App() {
       JSON.parse(localStorage.getItem('favorites')) || []
 
     setPromptHistory(savedPrompts)
-
     setFavorites(savedFavorites)
   }, [])
 
@@ -49,14 +42,12 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div
-        className={`min-h-screen transition ${themeClasses}`}
-      >
+      <div className={`min-h-screen transition ${themeClasses}`}>
         <Toaster position="top-right" />
 
+        {/* Background effects */}
         <div className="fixed inset-0 -z-10 overflow-hidden">
           <div className="absolute left-[-10%] top-[-10%] h-[400px] w-[400px] rounded-full bg-cyan-500/20 blur-3xl" />
-
           <div className="absolute bottom-[-10%] right-[-10%] h-[400px] w-[400px] rounded-full bg-purple-500/20 blur-3xl" />
         </div>
 
@@ -79,41 +70,42 @@ function App() {
             />
           </div>
 
-          <div>
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <Home
-                    category={category}
-                    promptHistory={promptHistory}
-                    setPromptHistory={setPromptHistory}
-                    favorites={favorites}
-                    setFavorites={setFavorites}
-                  />
-                }
-              />
+          {/* Suspense wrapper for lazy loading */}
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center mt-10 text-gray-400">
+                Loading...
+              </div>
+            }
+          >
+            <div>
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <Home
+                      category={category}
+                      promptHistory={promptHistory}
+                      setPromptHistory={setPromptHistory}
+                      favorites={favorites}
+                      setFavorites={setFavorites}
+                    />
+                  }
+                />
 
-              <Route
-                path="/explore"
-                element={<Explore />}
-              />
+                <Route path="/explore" element={<Explore />} />
 
-              <Route
-                path="/templates"
-                element={<Templates />}
-              />
+                <Route path="/templates" element={<Templates />} />
 
-              <Route
-                path="/saved"
-                element={
-                  <SavedPrompts
-                    promptHistory={favorites}
-                  />
-                }
-              />
-            </Routes>
-          </div>
+                <Route
+                  path="/saved"
+                  element={
+                    <SavedPrompts promptHistory={favorites} />
+                  }
+                />
+              </Routes>
+            </div>
+          </Suspense>
         </main>
       </div>
     </BrowserRouter>
