@@ -32,6 +32,7 @@ function App() {
     const savedFavorites =
       JSON.parse(localStorage.getItem('favorites')) || []
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPromptHistory(savedPrompts)
     setFavorites(savedFavorites)
   }, [])
