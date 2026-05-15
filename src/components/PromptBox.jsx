@@ -1,31 +1,67 @@
 import { useState } from 'react'
+import toast from 'react-hot-toast'
+import { Copy, Sparkles } from 'lucide-react'
+
 import { generatePrompt } from '../utils/promptGenerator'
 
-function PromptBox() {
+function PromptBox({
+  promptHistory,
+  setPromptHistory,
+}) {
   const [idea, setIdea] = useState('')
   const [category, setCategory] = useState('ChatGPT')
   const [generatedPrompt, setGeneratedPrompt] = useState('')
 
   const handleGeneratePrompt = () => {
-    if (!idea.trim()) return
+    if (!idea.trim()) {
+      toast.error('Please describe your idea first.')
+      return
+    }
 
     const result = generatePrompt(category, idea)
 
     setGeneratedPrompt(result)
+
+    const updatedHistory = [
+      {
+        text: result,
+        category,
+      },
+      ...promptHistory,
+    ]
+
+    setPromptHistory(updatedHistory)
+
+    localStorage.setItem(
+      'promptHistory',
+      JSON.stringify(updatedHistory)
+    )
+
+    toast.success('Prompt generated successfully!')
   }
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(generatedPrompt)
-      alert('Prompt copied successfully!')
+
+      toast.success('Prompt copied to clipboard!')
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
-      alert('Failed to copy prompt.')
+      toast.error('Failed to copy prompt.')
     }
   }
 
   return (
-    <section className="mx-auto max-w-4xl pb-24">
+    <section className="mx-auto max-w-4xl pb-10">
       <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
+        <div className="mb-6 flex items-center gap-3">
+          <Sparkles className="text-cyan-300" />
+
+          <h2 className="text-2xl font-bold">
+            AI Prompt Generator
+          </h2>
+        </div>
+
         <div className="space-y-6">
           <div>
             <label className="mb-3 block text-sm font-medium text-gray-300">
@@ -60,8 +96,10 @@ function PromptBox() {
 
           <button
             onClick={handleGeneratePrompt}
-            className="w-full rounded-2xl bg-cyan-400 py-4 text-lg font-semibold text-black transition hover:scale-[1.02] hover:bg-cyan-300"
+            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-cyan-400 py-4 text-lg font-semibold text-black transition hover:scale-[1.02] hover:bg-cyan-300"
           >
+            <Sparkles size={20} />
+
             Generate Prompt
           </button>
 
@@ -74,8 +112,10 @@ function PromptBox() {
 
                 <button
                   onClick={handleCopy}
-                  className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300 transition hover:bg-cyan-400/20"
+                  className="flex items-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300 transition hover:bg-cyan-400/20"
                 >
+                  <Copy size={16} />
+
                   Copy
                 </button>
               </div>
