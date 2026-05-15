@@ -6,7 +6,7 @@ A modern AI-powered web application that transforms simple ideas into **high-qua
 
 ## 🌍 Live Demo
 
-👉 Coming soon after deployment on Vercel
+👉 [Go From This Link:](https://ai-prompt-playground-eta.vercel.app/)
 
 ---
 
@@ -68,6 +68,7 @@ src/
 ---
 
 ## ⚙️ Installation
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/ai-prompt-playground.git
@@ -85,6 +86,7 @@ npm run dev
 ---
 
 ## 🚀 Build for Production
+
 ```bash
 npm run build
 ```
@@ -92,6 +94,7 @@ npm run build
 ---
 
 ## 🌟 Key Highlights
+
 - Smart Prompt Engine
 - Prompt Scoring Algorithm
 - AI Prompt Enhancement
@@ -106,6 +109,7 @@ npm run build
 ---
 
 ## 👨‍💻 Author
+
 Ahmed Djabrane Mammadi is: Network management and security Master’s Student | Full Stack Developer | Cybersecurity Developed by a web development learner focused on improving JavaScript logic and frontend skills.
 GitHub: https://github.com/djabranemmd
 
