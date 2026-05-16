@@ -55,7 +55,7 @@ into:
 
 ## 📁 Project Structure
 
-```txt
+```AI-PROMPT-PLAYGROUND
 src/
 │
 ├── components/
